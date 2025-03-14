@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<robot name="box_bot">
+
+  <!-- distance z base_link chassis - length_chassis/2 + wheel_offset(wheel_radius/2) = 0.0775 + 0.0352/2 = 0.0951 -->
+  <!-- distance z chassis rods - length_rod/2 + length_chassis/2 + wheel_offset(wheel_radius/2) = 0.110 + 0.0775 = 0.1875 -->
+  <!-- distance z chassis tray - length_tray/2 + length_chassis/2 +  length_rod = 0.045 + 0.0775 + 0.220 = 0.3425 -->
+
+  <!-- distance z chassis wheels - (-length_chassis/2) = -0.0775 -->
+
+  
+  <material name="light_gray">
+    <color rgba="0.8 0.8 0.8 1"/>
+  </material>
+
+  <material name="gray">
+    <color rgba="0.4 0.4 0.4 1"/>
+  </material>
+
+  <material name="green_dark">
+    <color rgba="0.0 0.5 0.0 1"/>
+  </material>
+
+  <material name="blue">
+      <color rgba="0.0 0.0 1.0 1"/>
+  </material>
+
+  <material name="black">
+      <color rgba="0.0 0.0 0.0 1"/>
+  </material>
+
+  <material name="white">
+      <color rgba="1.0 1.0 1.0 1"/>
+  </material>
+
+  <link name="base_link">
+  </link>
+
+  <!-- chassis -->
+  <link name="chassis">
+    <visual>
+      <geometry>
+        <cylinder length="0.155" radius="0.178"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <joint name="base_link_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.1127" />
+    <parent link="base_link" />
+    <child link="chassis" />
+  </joint>
+
+    <!-- standoff rods -->
+  <link name="standoff_rod_1">
+    <visual>
+      <geometry>
+        <cylinder length="0.220" radius="0.010"/>
+      </geometry>
+      <material name="light_gray"/>
+    </visual>
+  </link>
+
+  <link name="standoff_rod_2">
+    <visual>
+      <geometry>
+        <cylinder length="0.220" radius="0.010"/>
+      </geometry>
+      <material name="light_gray"/>
+    </visual>
+  </link>
+
+  <link name="standoff_rod_3">
+    <visual>
+      <geometry>
+        <cylinder length="0.220" radius="0.010"/>
+      </geometry>
+      <material name="light_gray"/>
+    </visual>
+  </link>
+
+  <link name="standoff_rod_4">
+    <visual>
+      <geometry>
+        <cylinder length="0.220" radius="0.010"/>
+      </geometry>
+      <material name="light_gray"/>
+    </visual>
+  </link>
+
+  <joint name="joint_standoff_rod_1" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0.140 0.1875" />
+    <parent link="chassis" />
+    <child link="standoff_rod_1" />
+  </joint>
+
+  <joint name="joint_standoff_rod_2" type="fixed">
+    <origin rpy="0 0 0" xyz="0 -0.140 0.1875" />
+    <parent link="chassis" />
+    <child link="standoff_rod_2" />
+  </joint>
+
+  <joint name="joint_standoff_rod_3" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.140 0 0.1875" />
+    <parent link="chassis" />
+    <child link="standoff_rod_3" />
+  </joint>
+
+  <joint name="joint_standoff_rod_4" type="fixed">
+    <origin rpy="0 0 0" xyz="0.140 0 0.1875" />
+    <parent link="chassis" />
+    <child link="standoff_rod_4" />
+  </joint>
+
+  <!-- cup holder tray -->
+  <link name="tray">
+    <visual>
+      <geometry>
+        <cylinder length="0.090" radius="0.160"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <joint name="joint_tray" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.3425" />
+    <parent link="chassis" />
+    <child link="tray" />
+  </joint>
+  
+  <!-- Wheel Left -->
+  <link name="left_wheel">      
+      <visual>
+        <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0206" radius="0.0352"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+  </link>
+
+  <joint name="joint_left_wheel" type="continuous">
+    <origin rpy="0 0 0" xyz="0 0.140 -0.0775"/>
+    <child link="left_wheel"/>
+    <parent link="chassis"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+    <limit effort="10000" velocity="1000"/>
+    <joint_properties damping="1.0" friction="1.0"/>
+  </joint>
+
+  <!-- Wheel Right -->
+  <link name="right_wheel">      
+      <visual>
+        <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0206" radius="0.0352"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+  </link>
+
+  <joint name="joint_right_wheel" type="continuous">
+    <origin rpy="0 0 0" xyz="0 -0.140 -0.0775"/>
+    <child link="right_wheel"/>
+    <parent link="chassis"/>
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+    <limit effort="10000" velocity="1000"/>
+    <joint_properties damping="1.0" friction="1.0"/>
+  </joint>
+
+</robot>
