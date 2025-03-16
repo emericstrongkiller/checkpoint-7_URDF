@@ -7,9 +7,16 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(urdf REQUIRED)
+find_package(xacro REQUIRED)
+# For control
+find_package(ros2_control REQUIRED)
+find_package(gazebo_ros2_control REQUIRED)
+find_package(joint_state_broadcaster REQUIRED)
+find_package(joint_trajectory_controller REQUIRED)
+find_package(velocity_controllers REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(gazebo_ros REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -28,6 +35,9 @@ install(
     urdf
     rviz
     launch
+	worlds
+	include
+	config
   DESTINATION
     share/${PROJECT_NAME}/
 )
