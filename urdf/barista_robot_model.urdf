@@ -1,51 +1,93 @@
 <?xml version="1.0"?>
-<robot name="barista_bot">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="barista_bot">
 
-  <!-- distance z base_link chassis - length_chassis/2 + wheel_offset(wheel_radius/2) = 0.0775 + 0.0352/2 = 0.0951 -->
-  <!-- distance z chassis rods - length_rod/2 + length_chassis/2 + wheel_offset(wheel_radius/2) = 0.110 + 0.0775 = 0.1875 -->
-  <!-- distance z chassis tray - length_tray/2 + length_chassis/2 +  length_rod = 0.045 + 0.0775 + 0.220 = 0.3425 -->
-  <!-- distance z chassis wheels - (-length_chassis/2) = -0.0775 -->
+  <!-- General properties -->
+  <xacro:property name="PI" value="3.14159265359"/>
+  <xacro:property name="wheel_offset" value="0.0352 / 2"/> <!-- Wheel radius / 2 -->
+
+  <!-- Chassis properties -->
+  <xacro:property name="chassis_length" value="0.155" />
+  <xacro:property name="chassis_radius" value="0.178" />
+  <xacro:property name="chassis_mass" value="1.5" />
+  <xacro:property name="base_link_z" value="0.1127" /> <!-- length_chassis/2 + wheel_offset -->
+
+  <!-- Standoff rod properties -->
+  <xacro:property name="rod_length" value="0.220" />
+  <xacro:property name="rod_radius" value="0.010" />
+  <xacro:property name="rod_mass" value="0.1" />
+  <xacro:property name="rod_offset_xy" value="0.100" />
+  <xacro:property name="rod_z" value="0.1875" /> <!-- length_rod/2 + length_chassis/2 + wheel_offset -->
+
+  <!-- Tray properties -->
+  <xacro:property name="tray_length" value="0.090" />
+  <xacro:property name="tray_radius" value="0.160" />
+  <xacro:property name="tray_mass" value="0.5" />
+  <xacro:property name="tray_z" value="0.3425" /><!-- length_tray/2 + length_chassis/2 +  length_rod -->
+
+  <!-- Wheel properties -->
+  <xacro:property name="wheel_length" value="0.0206" />
+  <xacro:property name="wheel_radius" value="0.0352" />
+  <xacro:property name="wheel_mass" value="0.2" />
+  <xacro:property name="wheel_y_offset" value="0.140" />
+  <xacro:property name="wheel_z_offset" value="-0.0775" />
+
+    <!-- Caster Wheel properties -->
+  <xacro:property name="caster_radius" value=" 0.0352" />
+  <xacro:property name="caster_wheel_offset" value="0.140" />
+  <!-- laser property -->
+  <xacro:property name="laser_scanner_origin_z" value="0.1"/>
+  <xacro:property name="laser_scanner_origin_xy" value="0.12"/>
+  <!-- Material properties -->
+  <xacro:property name="light_gray_color" value="0.8 0.8 0.8 1" />
+  <xacro:property name="gray_color" value="0.4 0.4 0.4 1" />
+  <xacro:property name="green_dark_color" value="0.0 0.5 0.0 1" />
+  <xacro:property name="blue_color" value="0.0 0.0 1.0 1" />
+  <xacro:property name="black_color" value="0.0 0.0 0.0 1" />
+  <xacro:property name="white_color" value="1.0 1.0 1.0 1" />
+  
+  <!-- Materials -->
   <material name="light_gray">
-    <color rgba="0.8 0.8 0.8 1" />
+    <color rgba="${light_gray_color}" />
   </material>
   <material name="gray">
-    <color rgba="0.4 0.4 0.4 1" />
+    <color rgba="${gray_color}" />
   </material>
   <material name="green_dark">
-    <color rgba="0.0 0.5 0.0 1" />
+    <color rgba="${green_dark_color}" />
   </material>
   <material name="blue">
-    <color rgba="0.0 0.0 1.0 1" />
+    <color rgba="${blue_color}" />
   </material>
   <material name="black">
-    <color rgba="0.0 0.0 0.0 1" />
+    <color rgba="${black_color}" />
   </material>
   <material name="white">
-    <color rgba="1.0 1.0 1.0 1" />
+    <color rgba="${white_color}" />
   </material>
-  <link name="base_link"></link>
+
+  <link name="base_link" />
 
   <!-- chassis -->
   <link name="chassis">
     <visual>
       <geometry>
-        <cylinder length="0.155" radius="0.178" />
+        <cylinder length="${chassis_length}" radius="${chassis_radius}" />
       </geometry>
       <material name="blue" />
     </visual>
     <collision>
       <geometry>
-        <cylinder length="0.155" radius="0.178" />
+        <cylinder length="${chassis_length}" radius="${chassis_radius}" />
       </geometry>
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="1.5" />
+      <mass value="${chassis_mass}" />
       <inertia ixx="0.045" iyy="0.045" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
     </inertial>
   </link>
   <joint name="base_link_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.1127" />
+    <origin rpy="0 0 0" xyz="0 0 ${base_link_z}" />
     <parent link="base_link" />
     <child link="chassis" />
   </joint>
@@ -54,18 +96,18 @@
   <link name="standoff_rod_1">
     <visual>
       <geometry>
-        <cylinder length="0.220" radius="0.010" />
+        <cylinder length="${rod_length}" radius="${rod_radius}" />
       </geometry>
       <material name="light_gray" />
     </visual>
     <collision>
       <geometry>
-        <cylinder length="0.220" radius="0.010" />
+        <cylinder length="${rod_length}" radius="${rod_radius}" />
       </geometry>
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.1" />
+      <mass value="${rod_mass}" />
       <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
         iyz="0.0" />
     </inertial>
@@ -73,7 +115,7 @@
   <link name="standoff_rod_2">
     <visual>
       <geometry>
-        <cylinder length="0.220" radius="0.010" />
+        <cylinder length="${rod_length}" radius="${rod_radius}" />
       </geometry>
       <material name="light_gray" />
     </visual>
@@ -92,18 +134,18 @@
   <link name="standoff_rod_3">
     <visual>
       <geometry>
-        <cylinder length="0.220" radius="0.010" />
+        <cylinder length="${rod_length}" radius="${rod_radius}" />
       </geometry>
       <material name="light_gray" />
     </visual>
     <collision>
       <geometry>
-        <cylinder length="0.220" radius="0.010" />
+        <cylinder length="${rod_length}" radius="${rod_radius}" />
       </geometry>
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.1" />
+      <mass value="${rod_mass}" />
       <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
         iyz="0.0" />
     </inertial>
@@ -111,40 +153,40 @@
   <link name="standoff_rod_4">
     <visual>
       <geometry>
-        <cylinder length="0.220" radius="0.010" />
+        <cylinder length="${rod_length}" radius="${rod_radius}" />
       </geometry>
       <material name="light_gray" />
     </visual>
     <collision>
       <geometry>
-        <cylinder length="0.220" radius="0.010" />
+        <cylinder length="${rod_length}" radius="${rod_radius}" />
       </geometry>
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.1" />
+      <mass value="${rod_mass}" />
       <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
         iyz="0.0" />
     </inertial>
   </link>
 
   <joint name="joint_standoff_rod_1" type="fixed">
-    <origin rpy="0 0 0" xyz="0.100 0.100 0.1875" />
+    <origin rpy="0 0 0" xyz="${rod_offset_xy} ${rod_offset_xy} ${rod_z}" />
     <parent link="chassis" />
     <child link="standoff_rod_1" />
   </joint>
   <joint name="joint_standoff_rod_2" type="fixed">
-    <origin rpy="0 0 0" xyz="0.100 -0.100 0.1875" />
+    <origin rpy="0 0 0" xyz="${rod_offset_xy} -${rod_offset_xy} ${rod_z}" />
     <parent link="chassis" />
     <child link="standoff_rod_2" />
   </joint>
   <joint name="joint_standoff_rod_3" type="fixed">
-    <origin rpy="0 0 0" xyz="-0.100 -0.100 0.1875" />
+    <origin rpy="0 0 0" xyz="-${rod_offset_xy} -${rod_offset_xy} ${rod_z}" />
     <parent link="chassis" />
     <child link="standoff_rod_3" />
   </joint>
   <joint name="joint_standoff_rod_4" type="fixed">
-    <origin rpy="0 0 0" xyz="-0.100 0.100 0.1875" />
+    <origin rpy="0 0 0" xyz="-${rod_offset_xy} ${rod_offset_xy} ${rod_z}" />
     <parent link="chassis" />
     <child link="standoff_rod_4" />
   </joint>
@@ -153,23 +195,23 @@
   <link name="tray">
     <visual>
       <geometry>
-        <cylinder length="0.090" radius="0.160" />
+        <cylinder length="${tray_length}" radius="${tray_radius}" />
       </geometry>
       <material name="blue" />
     </visual>
     <collision>
       <geometry>
-        <cylinder length="0.090" radius="0.160" />
+        <cylinder length="${tray_length}" radius="${tray_radius}" />
       </geometry>
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.5" />
+      <mass value="${tray_mass}" />
       <inertia ixx="0.01" iyy="0.01" izz="0.005" ixy="0.0" ixz="0.0" iyz="0.0" />
     </inertial>
   </link>
   <joint name="joint_tray" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.3425" />
+    <origin rpy="0 0 0" xyz="0 0 ${tray_z}" />
     <parent link="chassis" />
     <child link="tray" />
   </joint>
@@ -177,27 +219,27 @@
   <!-- Wheel Left -->
   <link name="left_wheel">
     <visual>
-      <origin rpy="0 1.5707 1.5707" xyz="0 0 0" />
+      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
       <geometry>
-        <cylinder length="0.0206" radius="0.0352" />
+        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
       </geometry>
       <material name="black" />
     </visual>
     <collision>
-      <origin rpy="0 1.5707 1.5707" xyz="0 0 0" />
+      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
       <geometry>
-        <cylinder length="0.0206" radius="0.0352" />
+        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
       </geometry>
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.2" />
+      <mass value="${wheel_mass}" />
       <inertia ixx="0.0001" iyy="0.0001" izz="0.0002" ixy="0.0" ixz="0.0"
         iyz="0.0" />
     </inertial>
   </link>
   <joint name="joint_left_wheel" type="continuous">
-    <origin rpy="0 0 0" xyz="0 0.140 -0.0775" />
+    <origin rpy="0 0 0" xyz="0 ${wheel_y_offset} ${wheel_z_offset}" />
     <child link="left_wheel" />
     <parent link="chassis" />
     <axis rpy="0 0 0" xyz="0 1 0" />
@@ -208,27 +250,27 @@
   <!-- Wheel Right -->
   <link name="right_wheel">
     <visual>
-      <origin rpy="0 1.5707 1.5707" xyz="0 0 0" />
+      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
       <geometry>
-        <cylinder length="0.0206" radius="0.0352" />
+        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
       </geometry>
       <material name="black" />
     </visual>
     <collision>
-      <origin rpy="0 1.5707 1.5707" xyz="0 0 0" />
+      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
       <geometry>
-        <cylinder length="0.0206" radius="0.0352" />
+        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
       </geometry>
     </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.2" />
+      <mass value="${wheel_mass}" />
       <inertia ixx="0.0001" iyy="0.0001" izz="0.0002" ixy="0.0" ixz="0.0"
         iyz="0.0" />
     </inertial>
   </link>
   <joint name="joint_right_wheel" type="continuous">
-    <origin rpy="0 0 0" xyz="0 -0.140 -0.0775" />
+    <origin rpy="0 0 0" xyz="0 -${wheel_y_offset} ${wheel_z_offset}" />
     <child link="right_wheel" />
     <parent link="chassis" />
     <axis rpy="0 0 0" xyz="0 1 0" />
@@ -239,16 +281,16 @@
   <!-- front caster Wheel -->
   <link name="front_caster_wheel">
     <visual>
-      <origin rpy="0 1.5707 1.5707" xyz="0 0 0" />
+      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
       <geometry>
-        <sphere radius="0.0352" />
+        <sphere radius="${caster_radius}" />
       </geometry>
       <material name="green_dark" />
     </visual>
     <collision>
-      <origin rpy="0 1.5707 1.5707" xyz="0 0 0" />
+      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
       <geometry>
-        <sphere radius="0.0352" />
+        <sphere radius="${caster_radius}" />
       </geometry>
     </collision>
     <inertial>
@@ -259,7 +301,7 @@
     </inertial>
   </link>
   <joint name="front_pitch_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="0.140 0 -0.0775" />
+    <origin rpy="0 0 0" xyz="${caster_wheel_offset} 0 ${wheel_z_offset}" />
     <parent link="chassis" />
     <child link="front_caster_wheel" />
     <axis xyz="0 1 0" />
@@ -270,16 +312,16 @@
   <!-- back caster Wheel -->
   <link name="back_caster_wheel">
     <visual>
-      <origin rpy="0 1.5707 1.5707" xyz="0 0 0" />
+      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
       <geometry>
-        <sphere radius="0.0352" />
+        <sphere radius="${caster_radius}" />
       </geometry>
       <material name="green_dark" />
     </visual>
     <collision>
-      <origin rpy="0 1.5707 1.5707" xyz="0 0 0" />
+      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
       <geometry>
-        <sphere radius="0.0352" />
+        <sphere radius="${caster_radius}" />
       </geometry>
     </collision>
     <inertial>
@@ -290,7 +332,7 @@
     </inertial>
   </link>
   <joint name="back_pitch_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="-0.140 0 -0.0775" />
+    <origin rpy="0 0 0" xyz="-${caster_wheel_offset} 0 ${wheel_z_offset}" />
     <parent link="chassis" />
     <child link="back_caster_wheel" />
     <axis xyz="0 1 0" />
@@ -320,7 +362,7 @@
   </link>
   <!-- 0.0775 -->
   <joint name="joint_laser_scanner" type="continuous">
-    <origin rpy="0 0 0" xyz="0.120 0.0 0.1"/>
+    <origin rpy="0 0 0" xyz="${laser_scanner_origin_xy} 0 ${laser_scanner_origin_z}"/>
     <parent link="chassis"/>
     <child link="laser_scanner"/>
     <axis xyz="0 0 1"/>
@@ -382,10 +424,6 @@
 
       <joint_name>joint_left_wheel</joint_name>
       <joint_name>joint_right_wheel</joint_name>
-      <joint_name>front_yaw_joint</joint_name>
-      <joint_name>back_yaw_joint</joint_name>
-      <joint_name>front_roll_joint</joint_name>
-      <joint_name>back_roll_joint</joint_name>
       <joint_name>front_pitch_joint</joint_name>
       <joint_name>back_pitch_joint</joint_name>
       <joint_name>joint_laser_scanner</joint_name>

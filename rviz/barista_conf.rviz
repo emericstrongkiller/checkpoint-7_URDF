@@ -227,7 +227,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /barista_bot/scan
+        Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
       Value: true

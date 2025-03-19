@@ -38,6 +38,8 @@ install(
 	worlds
 	include
 	config
+	xacro
+	meshes
   DESTINATION
     share/${PROJECT_NAME}/
 )

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot
+  xmlns:xacro="http://www.ros.org/wiki/xacro"
+  name="laser_scanner">
+
+  <xacro:property name="include_laser" default="true" />
+  <xacro:property name="laser_x" value="0.120" />
+  <xacro:property name="laser_y" value="0.0" />
+  <xacro:property name="laser_z" value="0.1" />
+
+  <xacro:macro name="laser_scanner" params="parent *origin">
+    <xacro:if value="${include_laser}">
+      <link name="laser_scanner">
+        <visual>
+          <origin rpy="0 0 0" xyz="0 0 -0.0225" />
+          <geometry>
+            <mesh
+              filename="package://barista_robot_description/meshes/sick_microscan3.dae"
+              scale="0.5 0.5 0.5" />
+          </geometry>
+        </visual>
+        <collision>
+          <origin rpy="0 0 0" xyz="0 0 0.0204" />
+          <geometry>
+            <cylinder length="0.0408" radius="0.037493" />
+          </geometry>
+        </collision>
+        <inertial>
+          <mass value="0.01" />
+          <origin rpy="0 0 0" xyz="0 0 0.0204" />
+          <inertia
+            ixx="6.066578520833334e-06"
+            ixy="0"
+            ixz="0"
+            iyy="6.072950163333333e-06"
+            iyz="0"
+            izz="9.365128684166666e-06" />
+        </inertial>
+      </link>
+
+      <joint name="joint_laser_scanner" type="continuous">
+        <xacro:insert_block name="origin" />
+        <parent link="${parent}" />
+        <child link="laser_scanner" />
+        <axis xyz="0 0 1" />
+        <limit effort="10.0" velocity="2.0" />
+        <dynamics friction="0.01" />
+      </joint>
+    </xacro:if>
+  </xacro:macro>
+</robot>

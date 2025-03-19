@@ -25,7 +25,6 @@ def generate_launch_description():
     robot_desc_path = os.path.join(get_package_share_directory(package_description), "urdf", urdf_file)
 
     # Robot State Publisher
-
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
