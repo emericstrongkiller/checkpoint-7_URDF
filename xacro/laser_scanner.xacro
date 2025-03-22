@@ -12,7 +12,7 @@
     <xacro:if value="${include_laser}">
       <link name="laser_scanner">
         <visual>
-          <origin rpy="0 0 0" xyz="0 0 -0.0225" />
+          <origin rpy="0 0 0" xyz="0 0 -0.062" />
           <geometry>
             <mesh
               filename="package://barista_robot_description/meshes/sick_microscan3.dae"
@@ -20,14 +20,14 @@
           </geometry>
         </visual>
         <collision>
-          <origin rpy="0 0 0" xyz="0 0 0.0204" />
+          <origin rpy="0 0 0" xyz="0 0 -0.062" />
           <geometry>
             <cylinder length="0.0408" radius="0.037493" />
           </geometry>
         </collision>
         <inertial>
           <mass value="0.01" />
-          <origin rpy="0 0 0" xyz="0 0 0.0204" />
+          <origin rpy="0 0 0" xyz="0 0 -0.062" />
           <inertia
             ixx="6.066578520833334e-06"
             ixy="0"
