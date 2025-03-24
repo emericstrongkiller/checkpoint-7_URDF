@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="barista_bot">
+  <xacro:arg name="robot_name" default="barista_X"/>
 
   <!-- General properties -->
   <xacro:property name="PI" value="3.14159265359"/>
