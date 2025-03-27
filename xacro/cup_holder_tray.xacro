@@ -7,8 +7,8 @@
   <xacro:property name="tray_radius" value="0.160" />
   <xacro:property name="tray_mass" value="0.5" />
 
-  <xacro:macro name="cup_holder_tray" params="parent *origin">
-    <link name="tray">
+  <xacro:macro name="cup_holder_tray" params="parent robot_name *origin">
+    <link name="${robot_name}/tray">
       <visual>
         <geometry>
           <cylinder length="${tray_length}" radius="${tray_radius}" />
@@ -33,10 +33,10 @@
       </inertial>
     </link>
 
-    <joint name="joint_tray" type="fixed">
+    <joint name="${robot_name}/joint_tray" type="fixed">
       <xacro:insert_block name="origin" />
       <parent link="${parent}" />
-      <child link="tray" />
+      <child link="${robot_name}/tray" />
     </joint>
   </xacro:macro>
 </robot>

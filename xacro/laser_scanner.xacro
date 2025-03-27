@@ -10,7 +10,7 @@
 
   <xacro:macro name="laser_scanner" params="parent *origin">
     <xacro:if value="${include_laser}">
-      <link name="laser_scanner">
+      <link name="${robot_name}/laser_scanner">
         <visual>
           <origin rpy="0 0 0" xyz="0 0 -0.062" />
           <geometry>
@@ -38,10 +38,10 @@
         </inertial>
       </link>
 
-      <joint name="joint_laser_scanner" type="continuous">
+      <joint name="${robot_name}/joint_laser_scanner" type="continuous">
         <xacro:insert_block name="origin" />
         <parent link="${parent}" />
-        <child link="laser_scanner" />
+        <child link="${robot_name}/laser_scanner" />
         <axis xyz="0 0 1" />
         <limit effort="10.0" velocity="2.0" />
         <dynamics friction="0.01" />

@@ -28,12 +28,15 @@ def generate_launch_description():
         #xacro.process_doc(doc)
         xacro.process_doc(doc, mappings={'robot_name': robot_name})
         params = {'robot_description': doc.toxml()}
+        #params = {'robot_description': doc.toxml(),
+        #  'frame_prefix': robot_name + '/'}
 
         robot_state_publisher = Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
             output='screen',
-            parameters=[params]
+            parameters=[params],
+            #remappings=[('/robot_description', '/yeyeyea/robot_description')]
         )
 
         return robot_state_publisher
@@ -80,14 +83,14 @@ def generate_launch_description():
         )
         return spawn_robot
 
-    first_robot = 'rick'
+    #first_robot = 'rick'
     second_robot = 'morty'
 
     # Robot descriptions, each has a different namespace
-    robot_state_publisher_1 = create_robot_state_publisher(first_robot)
+    #robot_state_publisher_1 = create_robot_state_publisher(first_robot)
     robot_state_publisher_2 = create_robot_state_publisher(second_robot)
 
-    spawner_1 = robot_spawner(first_robot, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0)
+    #spawner_1 = robot_spawner(first_robot, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0)
     spawner_2 = robot_spawner(second_robot, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
 
@@ -140,8 +143,8 @@ def generate_launch_description():
     )
     ld.add_action(gazebo)
     ld.add_action(TimerAction(period=10.0, actions=[spawner_2]))
-    ld.add_action(TimerAction(period=10.0, actions=[spawner_1]))
-    ld.add_action(TimerAction(period=12.0, actions=[robot_state_publisher_1]))
+    #ld.add_action(TimerAction(period=10.0, actions=[spawner_1]))
+    #ld.add_action(TimerAction(period=12.0, actions=[robot_state_publisher_1]))
     ld.add_action(TimerAction(period=12.0, actions=[robot_state_publisher_2]))
     ld.add_action(TimerAction(period=14.0, actions=[rviz_node]))
     return ld    # Robot Spawner

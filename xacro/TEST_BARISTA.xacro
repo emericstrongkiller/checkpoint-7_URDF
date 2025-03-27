@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="barista_bot">
+  <xacro:arg name="robot_name" default="barista_X"/>
+  <xacro:property name="robot_name" value="yeyeyea"/>
 
   <!-- General properties -->
   <xacro:property name="PI" value="3.14159265359"/>
@@ -12,31 +14,20 @@
   <xacro:property name="base_link_z" value="0.1127" /> <!-- length_chassis/2 + wheel_offset -->
 
   <!-- Standoff rod properties -->
-  <xacro:property name="rod_length" value="0.220" />
-  <xacro:property name="rod_radius" value="0.010" />
-  <xacro:property name="rod_mass" value="0.1" />
-  <xacro:property name="rod_offset_xy" value="0.100" />
-  <xacro:property name="rod_z" value="0.1875" /> <!-- length_rod/2 + length_chassis/2 + wheel_offset -->
+  <xacro:include filename="$(find barista_robot_description)/xacro/standoff_rod.xacro" />
 
   <!-- Tray properties -->
-  <xacro:property name="tray_length" value="0.090" />
-  <xacro:property name="tray_radius" value="0.160" />
-  <xacro:property name="tray_mass" value="0.5" />
-  <xacro:property name="tray_z" value="0.3425" /><!-- length_tray/2 + length_chassis/2 +  length_rod -->
+  <xacro:include filename="$(find barista_robot_description)/xacro/cup_holder_tray.xacro" />
 
   <!-- Wheel properties -->
-  <xacro:property name="wheel_length" value="0.0206" />
-  <xacro:property name="wheel_radius" value="0.0352" />
-  <xacro:property name="wheel_mass" value="0.2" />
-  <xacro:property name="wheel_y_offset" value="0.140" />
-  <xacro:property name="wheel_z_offset" value="-0.0775" />
+  <xacro:include filename="$(find barista_robot_description)/xacro/drive_wheel.xacro" />
 
-    <!-- Caster Wheel properties -->
-  <xacro:property name="caster_radius" value=" 0.0352" />
-  <xacro:property name="caster_wheel_offset" value="0.140" />
+  <!-- Caster Wheel properties -->
+  <xacro:include filename="$(find barista_robot_description)/xacro/caster_wheel.xacro" />
+  
   <!-- laser property -->
-  <xacro:property name="laser_scanner_origin_z" value="0.1"/>
-  <xacro:property name="laser_scanner_origin_xy" value="0.12"/>
+  <xacro:include filename="$(find barista_robot_description)/xacro/laser_scanner.xacro" />
+
   <!-- Material properties -->
   <xacro:property name="light_gray_color" value="0.8 0.8 0.8 1" />
   <xacro:property name="gray_color" value="0.4 0.4 0.4 1" />
@@ -93,282 +84,53 @@
   </joint>
 
   <!-- standoff rods -->
-  <link name="standoff_rod_1">
-    <visual>
-      <geometry>
-        <cylinder length="${rod_length}" radius="${rod_radius}" />
-      </geometry>
-      <material name="light_gray" />
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="${rod_length}" radius="${rod_radius}" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="${rod_mass}" />
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
-        iyz="0.0" />
-    </inertial>
-  </link>
-  <link name="standoff_rod_2">
-    <visual>
-      <geometry>
-        <cylinder length="${rod_length}" radius="${rod_radius}" />
-      </geometry>
-      <material name="light_gray" />
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="0.220" radius="0.010" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.1" />
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
-        iyz="0.0" />
-    </inertial>
-  </link>
-  <link name="standoff_rod_3">
-    <visual>
-      <geometry>
-        <cylinder length="${rod_length}" radius="${rod_radius}" />
-      </geometry>
-      <material name="light_gray" />
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="${rod_length}" radius="${rod_radius}" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="${rod_mass}" />
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
-        iyz="0.0" />
-    </inertial>
-  </link>
-  <link name="standoff_rod_4">
-    <visual>
-      <geometry>
-        <cylinder length="${rod_length}" radius="${rod_radius}" />
-      </geometry>
-      <material name="light_gray" />
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="${rod_length}" radius="${rod_radius}" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="${rod_mass}" />
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
-        iyz="0.0" />
-    </inertial>
-  </link>
-
-  <joint name="joint_standoff_rod_1" type="fixed">
-    <origin rpy="0 0 0" xyz="${rod_offset_xy} ${rod_offset_xy} ${rod_z}" />
-    <parent link="chassis" />
-    <child link="standoff_rod_1" />
-  </joint>
-  <joint name="joint_standoff_rod_2" type="fixed">
-    <origin rpy="0 0 0" xyz="${rod_offset_xy} -${rod_offset_xy} ${rod_z}" />
-    <parent link="chassis" />
-    <child link="standoff_rod_2" />
-  </joint>
-  <joint name="joint_standoff_rod_3" type="fixed">
-    <origin rpy="0 0 0" xyz="-${rod_offset_xy} -${rod_offset_xy} ${rod_z}" />
-    <parent link="chassis" />
-    <child link="standoff_rod_3" />
-  </joint>
-  <joint name="joint_standoff_rod_4" type="fixed">
-    <origin rpy="0 0 0" xyz="-${rod_offset_xy} ${rod_offset_xy} ${rod_z}" />
-    <parent link="chassis" />
-    <child link="standoff_rod_4" />
-  </joint>
+  <xacro:standoff_rod suffix="1" parent="chassis">
+    <origin xyz="0.075 -0.100 0.1875" rpy="0 0 0" />
+  </xacro:standoff_rod>
+  <xacro:standoff_rod suffix="2" parent="chassis">
+    <origin xyz="-0.075 -0.100 0.1875" rpy="0 0 0" />
+  </xacro:standoff_rod>
+  <xacro:standoff_rod suffix="3" parent="chassis">
+    <origin xyz="-0.075 0.100 0.1875" rpy="0 0 0" />
+  </xacro:standoff_rod>
+  <xacro:standoff_rod suffix="4" parent="chassis">
+    <origin xyz="0.075 0.100 0.1875" rpy="0 0 0" />
+  </xacro:standoff_rod>
 
   <!-- cup holder tray -->
-  <link name="tray">
-    <visual>
-      <geometry>
-        <cylinder length="${tray_length}" radius="${tray_radius}" />
-      </geometry>
-      <material name="blue" />
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="${tray_length}" radius="${tray_radius}" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="${tray_mass}" />
-      <inertia ixx="0.01" iyy="0.01" izz="0.005" ixy="0.0" ixz="0.0" iyz="0.0" />
-    </inertial>
-  </link>
-  <joint name="joint_tray" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 ${tray_z}" />
-    <parent link="chassis" />
-    <child link="tray" />
-  </joint>
+  <xacro:cup_holder_tray parent="chassis">
+    <origin xyz="0 0 0.3425" rpy="0 0 0" />
+  </xacro:cup_holder_tray>
 
-  <!-- Wheel Left -->
-  <link name="left_wheel">
-    <visual>
-      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
-      <geometry>
-        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
-      </geometry>
-      <material name="black" />
-    </visual>
-    <collision>
-      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
-      <geometry>
-        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="${wheel_mass}" />
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0002" ixy="0.0" ixz="0.0"
-        iyz="0.0" />
-    </inertial>
-  </link>
-  <joint name="joint_left_wheel" type="continuous">
-    <origin rpy="0 0 0" xyz="0 ${wheel_y_offset} ${wheel_z_offset}" />
-    <child link="left_wheel" />
-    <parent link="chassis" />
-    <axis rpy="0 0 0" xyz="0 1 0" />
-    <limit effort="10000" velocity="1000" />
-    <joint_properties damping="1.0" friction="1.0" />
-  </joint>
+  <xacro:property name="wheel_y_offset" value="0.140" />
+  <xacro:property name="wheel_z_offset" value="-0.0775" />
 
-  <!-- Wheel Right -->
-  <link name="right_wheel">
-    <visual>
-      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
-      <geometry>
-        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
-      </geometry>
-      <material name="black" />
-    </visual>
-    <collision>
-      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
-      <geometry>
-        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="${wheel_mass}" />
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0002" ixy="0.0" ixz="0.0"
-        iyz="0.0" />
-    </inertial>
-  </link>
-  <joint name="joint_right_wheel" type="continuous">
-    <origin rpy="0 0 0" xyz="0 -${wheel_y_offset} ${wheel_z_offset}" />
-    <child link="right_wheel" />
-    <parent link="chassis" />
-    <axis rpy="0 0 0" xyz="0 1 0" />
-    <limit effort="10000" velocity="1000" />
-    <joint_properties damping="1.0" friction="1.0" />
-  </joint>
 
-  <!-- front caster Wheel -->
-  <link name="front_caster_wheel">
-    <visual>
-      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
-      <geometry>
-        <sphere radius="${caster_radius}" />
-      </geometry>
-      <material name="green_dark" />
-    </visual>
-    <collision>
-      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
-      <geometry>
-        <sphere radius="${caster_radius}" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.05" />
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
-        iyz="0.0" />
-    </inertial>
-  </link>
-  <joint name="front_pitch_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="${caster_wheel_offset} 0 ${wheel_z_offset}" />
-    <parent link="chassis" />
-    <child link="front_caster_wheel" />
-    <axis xyz="0 1 0" />
-    <limit effort="1000.0" velocity="100.0" />
-    <dynamics damping="0.0" friction="0.1" />
-  </joint>
+  <!-- Wheels -->
+  <xacro:drive_wheel side="left" parent="chassis">
+    <origin xyz="0 0.140 -0.0775" rpy="0 0 0" />
+  </xacro:drive_wheel>
 
-  <!-- back caster Wheel -->
-  <link name="back_caster_wheel">
-    <visual>
-      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
-      <geometry>
-        <sphere radius="${caster_radius}" />
-      </geometry>
-      <material name="green_dark" />
-    </visual>
-    <collision>
-      <origin rpy="0 ${PI/2} ${PI/2}" xyz="0 0 0" />
-      <geometry>
-        <sphere radius="${caster_radius}" />
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.05" />
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0.0" ixz="0.0"
-        iyz="0.0" />
-    </inertial>
-  </link>
-  <joint name="back_pitch_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="-${caster_wheel_offset} 0 ${wheel_z_offset}" />
-    <parent link="chassis" />
-    <child link="back_caster_wheel" />
-    <axis xyz="0 1 0" />
-    <limit effort="1000.0" velocity="100.0" />
-    <dynamics damping="0.0" friction="0.1" />
-  </joint>
+  <xacro:drive_wheel side="right" parent="chassis">
+    <origin xyz="0 -0.140 -0.0775" rpy="0 0 0" />
+  </xacro:drive_wheel>
+
+
+  <!-- caster Wheels -->
+  <xacro:caster_wheel prefix="front" parent="chassis">
+    <origin xyz="0.110 0 -0.0775" rpy="0 0 0" />
+  </xacro:caster_wheel>
+
+  <xacro:caster_wheel prefix="back" parent="chassis">
+    <origin xyz="-0.110 0 -0.0775" rpy="0 0 0" />
+  </xacro:caster_wheel>
+  
 
   <!-- Laser model -->
-  <link name="laser_scanner">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 -0.0225"/>
-      <geometry>
-        <mesh filename="package://barista_robot_description/meshes/sick_microscan3.dae" scale="0.5 0.5 0.5"/>
-      </geometry>
-    </visual>
-    <collision>
-       <origin rpy="0 0 0" xyz="0 0 0.0204"/>
-      <geometry>
-        <cylinder length="0.0408" radius="0.037493"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.01"/>
-      <origin rpy="0 0 0" xyz="0 0 0.0204"/>
-      <inertia ixx="6.066578520833334e-06" ixy="0" ixz="0" iyy="6.072950163333333e-06" iyz="0" izz="9.365128684166666e-06"/>
-    </inertial>
-  </link>
-  <!-- 0.0775 -->
-  <joint name="joint_laser_scanner" type="continuous">
-    <origin rpy="0 0 0" xyz="${laser_scanner_origin_xy} 0 ${laser_scanner_origin_z}"/>
-    <parent link="chassis"/>
-    <child link="laser_scanner"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="10.0" velocity="2.0"/>
-    <dynamics friction="0.01"/>
-  </joint>
+  <xacro:laser_scanner parent="chassis">
+    <origin xyz="0.12 0 0.14" rpy="0 0 0" />
+  </xacro:laser_scanner>
+
 
   <!-- Gazebo materials -->
   <gazebo reference="chassis">

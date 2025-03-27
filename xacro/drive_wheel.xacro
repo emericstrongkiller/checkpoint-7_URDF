@@ -8,8 +8,8 @@
   <xacro:property name="wheel_mass" value="0.2" />
   <xacro:property name="M_PI" value="3.14159265359" />
 
-  <xacro:macro name="drive_wheel" params="side parent *origin">
-    <link name="${side}_wheel">
+  <xacro:macro name="drive_wheel" params="side parent robot_name *origin">
+    <link name="${robot_name}/${side}_wheel">
       <visual>
         <origin rpy="0 ${M_PI/2} ${M_PI/2}" xyz="0 0 0" />
         <geometry>
@@ -35,9 +35,9 @@
           iyz="0.0" />
       </inertial>
     </link>
-    <joint name="joint_${side}_wheel" type="continuous">
+    <joint name="${robot_name}/joint_${side}_wheel" type="continuous">
       <xacro:insert_block name="origin" />
-      <child link="${side}_wheel" />
+      <child link="${robot_name}/${side}_wheel" />
       <parent link="${parent}" />
       <axis rpy="0 0 0" xyz="0 1 0" />
       <limit effort="10000" velocity="1000" />

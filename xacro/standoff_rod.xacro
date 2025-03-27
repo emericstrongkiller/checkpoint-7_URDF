@@ -7,8 +7,8 @@
   <xacro:property name="rod_radius" value="0.010" />
   <xacro:property name="rod_mass" value="0.1" />
 
-  <xacro:macro name="standoff_rod" params="suffix parent *origin">
-    <link name="standoff_rod_${suffix}">
+  <xacro:macro name="standoff_rod" params="suffix parent robot_name *origin">
+    <link name="${robot_name}/standoff_rod_${suffix}">
       <visual>
         <geometry>
           <cylinder length="${rod_length}" radius="${rod_radius}" />
@@ -33,10 +33,10 @@
       </inertial>
     </link>
 
-    <joint name="joint_standoff_rod_${suffix}" type="fixed">
+    <joint name="${robot_name}/joint_standoff_rod_${suffix}" type="fixed">
       <xacro:insert_block name="origin" />
       <parent link="${parent}" />
-      <child link="standoff_rod_${suffix}" />
+      <child link="${robot_name}/standoff_rod_${suffix}" />
     </joint>
   </xacro:macro>
 </robot>
