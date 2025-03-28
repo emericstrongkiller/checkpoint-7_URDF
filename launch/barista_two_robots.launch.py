@@ -26,7 +26,8 @@ def generate_launch_description():
         # convert XACRO file into URDF
         doc = xacro.parse(open(xacro_file))
         #xacro.process_doc(doc)
-        xacro.process_doc(doc, mappings={'robot_name': robot_name})
+        #xacro.process_doc(doc, mappings={'robot_name': robot_name})
+        xacro.process_doc(doc, mappings={'robot_name_arg': robot_name})
         params = {'robot_description': doc.toxml()}
         #params = {'robot_description': doc.toxml(),
         #  'frame_prefix': robot_name + '/'}
@@ -36,10 +37,23 @@ def generate_launch_description():
             executable='robot_state_publisher',
             output='screen',
             parameters=[params],
-            #remappings=[('/robot_description', '/yeyeyea/robot_description')]
+            remappings=[
+                ('/robot_description', f'/{robot_name}/robot_description'),
+                ('/joint_states', f'/{robot_name}/joint_states') # ADD THIS LINE
+            ]
         )
 
         return robot_state_publisher
+
+    def generate_origin(robot_name):
+        # Add to your launch file
+        static_tf_publisher = Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name=f'{robot_name}_origin_to_odom', # Unique name
+            arguments=['0', '0', '0', '0', '0', '0', 'origin', f'{robot_name}/odom']
+        )
+        return static_tf_publisher
     
     # RVIZ Configuration
     package_description = "barista_robot_description"
@@ -54,13 +68,13 @@ def generate_launch_description():
             arguments=['-d', rviz_config_dir])
 
 
-    def robot_spawner(entity_name, x, y, z, roll, pitch, yaw):
+    def robot_spawner(entity_name, x, y, z, roll, pitch, yaw, robot_name):
         position = [x, y, z]
         orientation = [roll, pitch, yaw]
         spawn_robot = Node(
             package='gazebo_ros',
             executable='spawn_entity.py',
-            name='spawn_entity',
+            name=f'{robot_name}_spawner', # Unique name
             output='screen',
             arguments=[
                 '-entity',
@@ -78,33 +92,36 @@ def generate_launch_description():
                 '-Y',
                 str(orientation[2]),
                 '-topic',
-                '/robot_description',
+                f'/{robot_name}/robot_description',
             ]
         )
         return spawn_robot
 
-    #first_robot = 'rick'
-    second_robot = 'morty'
+    first_robot = 'morty'
+    second_robot = 'rick' #(morty)
 
     # Robot descriptions, each has a different namespace
-    #robot_state_publisher_1 = create_robot_state_publisher(first_robot)
+    robot_state_publisher_1 = create_robot_state_publisher(first_robot)
     robot_state_publisher_2 = create_robot_state_publisher(second_robot)
 
-    #spawner_1 = robot_spawner(first_robot, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0)
-    spawner_2 = robot_spawner(second_robot, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    spawner_1 = robot_spawner(first_robot, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, first_robot)
+    spawner_2 = robot_spawner(second_robot, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, second_robot)
 
+    #origin generator for both robots
+    second_robot_origin_1 = generate_origin(first_robot)
+    second_robot_origin_2 = generate_origin(second_robot)
 
     # LAUNCH GAZEBO ON AN EMPTY WORLD
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
-    pkg_box_bot_gazebo = get_package_share_directory('barista_robot_description')
+    barista_description = get_package_share_directory('barista_robot_description')
 
     # We get the whole install dir
     # We do this to avoid having to copy or softlink manually the packages so that gazebo can find them
     description_package_name = "barista_robot_description"
     install_dir = get_package_prefix(description_package_name)
 
-    # Set the path to the WORLD model files. Is to find the models inside the models folder in my_box_bot_gazebo package
-    gazebo_models_path = os.path.join(pkg_box_bot_gazebo, 'models')
+    # Set the path to the WORLD model files. Is to find the models inside the models folder in barista description package
+    gazebo_models_path = os.path.join(barista_description, 'models')
     # os.environ["GAZEBO_MODEL_PATH"] = gazebo_models_path
 
     if 'GAZEBO_MODEL_PATH' in os.environ:
@@ -135,16 +152,18 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "world",
             default_value=[
-                os.path.join(pkg_box_bot_gazebo, "worlds", "empty_world.world"),
+                os.path.join(barista_description, "worlds", "empty_world.world"),
                 "",
             ],
             description="SDF world file",
         )
     )
     ld.add_action(gazebo)
-    ld.add_action(TimerAction(period=10.0, actions=[spawner_2]))
-    #ld.add_action(TimerAction(period=10.0, actions=[spawner_1]))
-    #ld.add_action(TimerAction(period=12.0, actions=[robot_state_publisher_1]))
-    ld.add_action(TimerAction(period=12.0, actions=[robot_state_publisher_2]))
-    ld.add_action(TimerAction(period=14.0, actions=[rviz_node]))
+    ld.add_action(TimerAction(period=10.0, actions=[spawner_1]))
+    ld.add_action(TimerAction(period=12.0, actions=[spawner_2]))
+    ld.add_action(TimerAction(period=14.0, actions=[robot_state_publisher_1]))
+    ld.add_action(TimerAction(period=16.0, actions=[robot_state_publisher_2]))
+    ld.add_action(TimerAction(period=18.0, actions=[second_robot_origin_1]))
+    ld.add_action(TimerAction(period=20.0, actions=[second_robot_origin_2]))
+    ld.add_action(TimerAction(period=22.0, actions=[rviz_node]))
     return ld    # Robot Spawner
